@@ -1,0 +1,106 @@
+< !DOCTYPE html >
+<html class="no-js" lang=“en">
+
+  <head>
+    @* REMOVED HEAD CONTENT FOR SNIPPET BREVITY *@
+  </head>
+  
+  
+  <body>
+  
+    <main data-ng-app=“datalusApp" class="wrapkit-wrapper" id="wrapper">
+    
+      <div data-ng-controller="officeHourIndexController as dashboard" class="panel-body">
+          <div data-ng-include="'templateOfficeHour.html'" id="containerOfficeHour">
+          </div>
+      </div>
+    
+    </main>
+    
+    
+    <script type="text/ng-template" id="templateOfficeHour.html">
+    
+        <div data-ng-repeat="officeHour in dashboard.officeHours" class="col-md-4 col-sm-6 session">
+            <div class="embed-responsive embed-responsive-16by9 text-light">
+                <img class="embed-responsive-item" src="/wrapkit/images/dummy/desk4.jpg" alt="cover">
+                <div class="embed-overlay bg-grd-dark"></div>
+                <div class="embed-content">
+                    <p style="font-size:21px"><a href="#" class="sessionTopic" ng-cloak>{{officeHour.topic}}</a></p>
+                    <a href="#" class="sessionSection" ng-cloak><i class="fa fa-chevron-right"></i> &nbsp;{{officeHour.section.title}} <small>({{officeHour.section.sectionNumberId}})</small></a>
+                </div>
+                <div class="embed-bar embed-bar-bottom">
+                    <div>
+                        <div><a href="#" class="sessionDate" ng-cloak><i class="fa fa-calendar"></i> &nbsp;{{officeHour.sessionDate | date}}</a></div>
+                        <div><a href="#" class="sessionTime" ng-cloak><i class="glyphicon glyphicon-time"></i> &nbsp;{{officeHour.startTime | date:"shortTime"}} - {{officeHour.endTime | date:"shortTime"}}</a></div>
+                    </div>
+                </div>
+            </div>
+            <div class="panel-heading p-2x">
+                <a href="#" class="kit-avatar kit-avatar-36 pull-left kit-avatar-fw">
+                    <img ng-src="https://datalus.s3-us-west-2.amazonaws.com/D12/{{officeHour.section.instructor.photoUrl}}" alt="avatar">
+                </a>
+                <p class="clearfix">
+                    <a class="pull-right btn-xs btn-success text-light" href="/OfficeHours/{{officeHour.instructor.id}}/{{officeHour.section.id}}/{{officeHour.id}}/edit"><strong>EDIT</strong></a>
+                    <a href="#" class="text-dark sessionInstructor" ng-cloak><strong>{{officeHour.section.instructor.firstName}} {{officeHour.section.instructor.lastName}}</strong></a>
+                    <br>
+                    <a href="#" class="text-muted sessionLocation" ng-cloak><i class="glyphicon glyphicon-map-marker"></i> {{officeHour.location}}</a>
+                </p>
+            </div>
+        </div>
+        
+    </script>
+    
+    
+    <script type="text/javascript" src="/scripts/datalus.services.officehours.js"></script>
+    
+    <script type="text/javascript" src="/scripts/app/services/officehourservice.js"></script>
+
+
+    <script type="text/javascript">
+
+        (function () {
+            "use strict";
+
+            angular.module(APPNAME)
+                .controller('officeHourIndexController', OfficeHourIndexController);
+
+            OfficeHourIndexController.$inject = ['$scope', '$baseController', '$officeHourService'];
+
+            function OfficeHourIndexController($scope, $baseController, $officeHourService) {
+                var vm = this;
+                vm.officeHours = null;
+
+                vm.$officeHourService = $officeHourService;
+                vm.$scope = $scope;
+
+                $baseController.merge(vm, $baseController);
+
+                vm.receiveOfficeHours = _receiveOfficeHours;
+                vm.onGetError = _onGetError;
+
+                vm.notify = vm.$officeHourService.getNotifier($scope);
+
+                render();
+
+                function render() {
+                    vm.$officeHourService.getAll(vm.receiveOfficeHours, vm.onGetError);
+                }
+
+                function _receiveOfficeHours(data) {
+                    vm.notify(function () {
+                        vm.officeHours = data.items;
+                    })
+                }
+
+                function _onGetError(jqXhr, error) {
+                    vm.$alertService.error("Couldn't get Office Hours...");
+                }
+            }
+
+        })();
+
+    </script>
+
+
+  </body>
+</html>

@@ -1,0 +1,96 @@
+< !DOCTYPE html >
+<html class="no-js" lang=“en">
+
+    <head>
+       @* REMOVED HEAD CONTENT FOR SNIPPET BREVITY *@
+    </head>
+    
+    
+    <body>
+    
+        <div class="content-body">
+      
+            <div id="ohContainer" class="row">
+            </div>
+          
+        </div>
+      
+        <script type="text/template>
+    
+            <div class="col-md-4 col-sm-6 session">
+                <div class="embed-responsive embed-responsive-16by9 text-light">
+                    <img class="embed-responsive-item" src="~/wrapkit/images/dummy/desk4.jpg" alt="cover">
+                    <div class="embed-overlay bg-grd-dark"></div>
+                    <div class="embed-content">
+                        <p class="lead"><a href="#" class="sessionTopic"></a></p>
+                    </div>
+                    <div class="embed-bar embed-bar-bottom">
+                        <div>
+                            <div><a href="#" class="mr-1x sessionDate"><i class="fa fa-calendar"></i> </a></div>
+                            <div><a href="#" class="sessionTime"><i class="glyphicon glyphicon-time"></i> </a></div>
+                        </div>
+                    </div>
+                </div><!-- /.embed -->
+                <div class="panel-heading p-2x">
+                    <a href="#" class="kit-avatar kit-avatar-36 pull-left kit-avatar-fw">
+                        <img src="~/wrapkit/images/dummy/uifaces19.jpg" alt="avatar">
+                    </a>
+                    <p class="clearfix">
+                        <a class="pull-right btn-xs btn-primary cmdEdit" href="">EDIT</a>
+                        <a href="#" class="text-dark sessionInstructor"><strong></strong></a>
+                        <br>
+                        <a href="#" class="text-muted sessionLocation"><i class="glyphicon glyphicon-map-marker"></i> </a>
+                    </p>
+                </div>
+            </div>
+    
+        </script>
+      
+        <script src="~/scripts/datalus.services.officehours.js"></script>
+        <script src="/Wrapkit/scripts/moment.js"></script>
+    
+        <script>
+    
+            var datalus = {
+                page = {}
+            };
+            
+            $(document).ready(datalus.page.startUp);
+            
+    
+            datalus.page.startUp = function () {
+                datalus.services.officeHours.getAll(datalus.page.ajaxGetAllSuccess, datalus.page.ajaxError);
+            }
+    
+            datalus.page.ajaxGetAllSuccess = function (data, status, xhr) {
+                datalus.page.loopForValues(data.items);
+            }
+    
+            datalus.page.ajaxError = function (jqXHR, textStatus, errorThrown) {
+                console.log("get all error...");
+            }
+    
+            datalus.page.loopForValues = function (items) {
+                var $ohContainer = $('#ohContainer');
+                var $template = $('.session');
+                for (var i = 0; i < items.length; i++) {
+                    var $clone = $template.clone();
+                    var oh = items[i];  //  oh = office hour
+                    datalus.page.transferValues(oh, $clone);
+                    $ohContainer.append($clone);
+                }
+            }
+    
+            datalus.page.transferValues = function (oh, $clone) {
+                $clone.find('.sessionTopic').append(oh.topic);
+                $clone.find('.sessionInstructor strong').append(oh.instructor.firstName + " " + oh.instructor.lastName);
+                $clone.find('.sessionLocation').append(oh.location);
+                $clone.find('.sessionDate').append(moment(oh.sessionDate).format('MMM DD, YYYY'));
+                $clone.find('.sessionTime').append(moment(oh.startTime).format('h:mm A') + " - " + moment(oh.endTime).format('h:mm A'));
+                $clone.find('.cmdEdit').attr("href", "/OfficeHours/" + oh.id + "/edit");
+            }
+    
+        </script>
+      
+    </body>
+</html>

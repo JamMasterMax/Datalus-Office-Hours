@@ -1,0 +1,225 @@
+
+ALTER PROC [dbo].[OfficeHours_SelectAllV2]
+AS
+/*
+
+	EXEC dbo.[OfficeHours_SelectAllV2]
+
+*/
+BEGIN
+	
+	SELECT 
+		OH.Id
+		, OH.Topic
+		, OH.InstructorId
+		, OH.Location
+		, OH.SessionDate
+		, convert(datetime, OH.StartTime) AS StartTime
+		, convert(datetime, OH.EndTime) AS EndTime
+		, OH.SectionId
+		
+		FROM dbo.OfficeHours OH (nolock)
+		ORDER BY OH.SessionDate, OH.StartTime
+
+	SELECT DISTINCT
+		S.Id
+		, S.SectionNumberId
+		, S.Title
+		, UP.Id as UserProfileId
+		, UP.FirstName as InstructorFirstName
+		, UP.LastName as InstructorLastName
+		, F.KeyValue as InstructorPhotoUrl
+
+		FROM dbo.OfficeHours OH (nolock) 
+		LEFT JOIN dbo.Sections S (nolock)
+			ON OH.SectionId = S.Id
+		LEFT JOIN dbo.UserProfiles UP (nolock)
+			ON S.InstructorId = UP.Id
+		LEFT JOIN dbo.Files F (nolock)
+			ON UP.PhotoFileId = F.Id
+
+END
+
+
+ - - - - - - - - - - - - - - - - - - - - -
+
+
+ALTER PROC [dbo].[OfficeHours_SelectByIdV2]
+	@Id int
+AS
+/*
+
+	EXEC OfficeHours_SelectByIdV2 
+	  @Id = 37
+
+*/
+BEGIN
+	
+	SELECT 
+		OH.Id
+		, OH.Topic
+		, OH.InstructorId
+		, OH.Location
+		, OH.SessionDate
+		, convert(datetime, OH.StartTime) AS StartTime
+		, convert(datetime, OH.EndTime) AS EndTime
+		, OH.SectionId
+		
+	  FROM dbo.OfficeHours OH (nolock)
+	  WHERE OH.Id = @Id
+
+	SELECT 
+		S.Id
+		, S.SectionNumberId
+		, S.Title
+		, U.Id as InstructorUserProfileId
+		, U.FirstName as InstructorFirstName
+		, U.LastName as InstructorLastName
+	  FROM dbo.OfficeHours OH (nolock) 
+		LEFT JOIN dbo.Sections S (nolock)
+			ON OH.SectionId = S.id
+		LEFT JOIN dbo.UserProfiles U (nolock)
+			ON S.InstructorId = U.Id
+	  WHERE OH.Id = @Id
+
+END
+
+
+- - - - - - - - - - - - - - - - - - - - -
+
+
+ALTER PROC [dbo].[OfficeHours_Insert]
+	@Id int output
+	, @Topic nvarchar(100)
+	, @InstructorId int
+	, @Location nvarchar(200)
+	, @SessionDate date
+	, @StartTime time(7)
+	, @EndTime time(7)
+	, @SectionId int
+AS
+/*
+
+	DECLARE 
+		@Id int
+		, @Topic nvarchar(100) = 'TEST INSERT'
+		, @InstructorId int = '5'
+		, @Location nvarchar(200) = 'SQL'
+		, @SessionDate date = '12/25/15'
+		, @StartTime time(7) = '18:00'
+		, @EndTime time(7) = '19:00'
+		, @SectionId int = 1
+
+	EXEC dbo.OfficeHours_Insert 
+		@Id output
+		, @Topic
+		, @InstructorId
+		, @Location
+		, @SessionDate
+		, @StartTime
+		, @EndTime
+		, @SectionId
+
+*/
+BEGIN
+
+	INSERT dbo.OfficeHours 
+	(
+		Topic
+		, InstructorId
+		, Location
+		, SessionDate
+		, StartTime
+		, EndTime
+		, SectionId
+	) 
+	
+	VALUES 
+	(
+		@Topic
+		, @InstructorId
+		, @Location
+		, @SessionDate
+		, @StartTime
+		, @EndTime
+		, @SectionId
+	)
+	
+	SELECT 
+		@Id = convert(int,scope_identity())
+
+END
+
+
+- - - - - - - - - - - - - - - - - - - - -
+
+
+ALTER PROC [dbo].[OfficeHours_Update] 
+	@Id int
+	, @Topic nvarchar(100)
+	, @InstructorId int
+	, @Location nvarchar(200)
+	, @SessionDate date
+	, @StartTime time(7)
+	, @EndTime time(7)
+	, @SectionId int
+AS
+/*
+
+	DECLARE 
+		@Id int = 5
+		, @Topic nvarchar(500) = 'TEST UPDATE'
+		, @InstructorId int = 10
+		, @Location nvarchar(128) = 'SQL SERVER'
+		, @SessionDate date = '12/25/15'
+		, @StartTime time(7) = '18:00'
+		, @EndTime time(7) = '19:00'
+		, @SectionId int = 2
+
+	EXEC dbo.OfficeHours_Update
+		@Id
+		, @Topic
+		, @InstructorId
+		, @Location
+		, @SessionDate
+		, @StartTime
+		, @EndTime
+		, @SectionId
+
+*/
+BEGIN
+
+	UPDATE [dbo].[OfficeHours] 
+	SET 
+		Topic = @Topic
+		, InstructorId = @InstructorId
+		, Location = @Location
+		, SessionDate = @SessionDate
+		, StartTime = @StartTime
+		, EndTime = @EndTime
+		, SectionId = @SectionId
+		, DateModified = getutcdate()
+	WHERE 
+		Id = @Id
+
+END
+
+
+- - - - - - - - - - - - - - - - - - - - -
+
+
+ALTER PROC [dbo].[OfficeHours_Delete]
+	@Id int
+AS
+/*
+
+	EXEC dbo.OfficeHours_Delete
+		@Id = 34
+
+	*/
+BEGIN
+	
+	DELETE dbo.OfficeHours
+	  WHERE Id = @Id
+
+END 

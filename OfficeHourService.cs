@@ -134,6 +134,18 @@ namespace Datalus.Web.Services
         
         #region -- Private Methods --
         
+        private void MapCommonParameters(OfficeHourInsertRequest model, SqlParameterCollection parameters)
+        {
+            parameters.AddWithValue("@Topic", model.Topic);
+            parameters.AddWithValue("@InstructorId", model.InstructorId);
+            parameters.AddWithValue("@Location", model.Location);
+            parameters.AddWithValue("@SessionDate", model.SessionDate);
+            parameters.AddWithValue("@StartTime", model.StartTime);
+            parameters.AddWithValue("@EndTime", model.EndTime);
+            parameters.AddWithValue("@SectionId", model.SectionId);
+        }
+        
+        
         private OfficeHour MapOfficeHour(IDataReader reader, Dictionary<int, SectionBase> sections)
         {
             OfficeHour officeHour;
@@ -194,16 +206,5 @@ namespace Datalus.Web.Services
             return instructor;
         }
         
-        
-        private void MapCommonParameters(OfficeHourInsertRequest model, SqlParameterCollection parameters)
-        {
-            parameters.AddWithValue("@Topic", model.Topic);
-            parameters.AddWithValue("@InstructorId", model.InstructorId);
-            parameters.AddWithValue("@Location", model.Location);
-            parameters.AddWithValue("@SessionDate", model.SessionDate);
-            parameters.AddWithValue("@StartTime", model.StartTime);
-            parameters.AddWithValue("@EndTime", model.EndTime);
-            parameters.AddWithValue("@SectionId", model.SectionId);
-        }
     }
 }

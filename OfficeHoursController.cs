@@ -1,8 +1,8 @@
-using Sabio.Web.Models.ViewModels;
+using Datalus.Web.Models.ViewModels;
 using System.Web.Mvc;
 
 
-namespace Sabio.Web.Controllers
+namespace Datalus.Web.Controllers
 {
 
     [RoutePrefix("OfficeHours")]
@@ -29,5 +29,7 @@ namespace Sabio.Web.Controllers
             model.SectionId = sectionId;
             return View(model);
         }
+        
     }
+    
 }

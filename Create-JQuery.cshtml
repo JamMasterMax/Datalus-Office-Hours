@@ -1,0 +1,304 @@
+< !DOCTYPE html >
+<html class="no-js" lang=“en">
+  <head>
+    @* REMOVED HEAD CONTENT FOR SNIPPET BREVITY *@
+  </head>
+  
+  
+  <body>
+
+
+      <h2 id="pageTitle"><span>Create</span> an Office Hour Session</h2>
+      
+      <div class="content-body">
+          <div class="row">
+      
+              <div class="col-md-8">
+                  <div class="panel" data-fill-color="true">
+                      <div class="panel-body">
+                          <form role="form" id="formOfficeHour">
+                          
+                              <div class="form-group" hidden>
+                                  <label class="control-label" for="idField">Id</label>
+                                  <input class="form-control" id="idField" name="id" value="@Model.Id">
+                              </div>
+                              
+                              <div class="form-group has-feedback">
+                                  <label class="control-label" for="inputTopic">Topic</label>
+                                  <input class="form-control" id="inputTopic" name="topic">
+                                  <span class="form-control-feedback"></span>
+                              </div>
+                              
+                              <div class="form-group">
+                                  <label class="control-label" for="inputInstructor">Instructor</label>
+                                  <label class="select select-o">
+                                      <select id="inputInstructor" name="instructorId">
+                                          <option value="">Select Instructor</option>
+                                          @foreach (var instructor in Model.Instructors)
+                                          {
+                                              <option value="@instructor.Id">@instructor.FirstName @instructor.LastName</option>
+                                          }
+                                      </select>
+                                  </label>
+                              </div>
+                              
+                              <div class="form-group has-feedback">
+                                  <label class="control-label" for="inputLocation">Location</label>
+                                  <input id="inputLocation" class="form-control" name="location">
+                                  <span class="form-control-feedback"></span>
+                              </div>
+                              
+                              <div class="form-group">
+                                  <label for="inputSessionDate" class="control-label">Session Date</label>
+                                  <input type="date" class="form-control" id="inputSessionDate" name="sessionDate" />
+                              </div>
+                              
+                              <div class="form-group">
+                                  <label for="inputStartTime" class="control-label">Start Time</label>
+                                  <input type="time" class="form-control" id="inputStartTime" name="startTime" />
+                              </div>
+                              
+                              <div class="form-group">
+                                  <label for="inputEndTime" class="control-label">End Time</label>
+                                  <input type="time" class="form-control" id="inputEndTime" name="endTime" />
+                              </div>
+      
+                              <div class="form-group clearfix">
+                                  <div class="pull-right mb-1x" id="formButtons">
+                                      <a id="cmdIndexReturn" class="btn btn-primary hidden" href="/officehours">Return To Index</a>
+                                      <button id="cmdDelete" class="btn btn-warning hidden" data-toggle="modal" data-target="#modalDeleteConfirm">Delete Office Hour</button>
+                                      <a href="/OfficeHours" class="btn btn-default" id="cmdCancel">Cancel</a>
+                                      <button type="reset" class="btn btn-default" id="cmdReset">Reset</button>
+                                      <button type="button" class="btn btn-primary" id="cmdSubmit">Submit</button>
+                                  </div>
+
+                                  <div id="alerts" style="clear:both">
+                                      <div id="alertCreateSuccess" class="alert alert-success fade in" hidden>
+                                          <button type="button" class="close" aria-hidden="true">&times;</button>
+                                          <strong>Confirmed!</strong> You successfully created a new Office Hour.
+                                          <p>
+                                              <a href="/officehours">Return To Index</a>
+                                          </p>
+                                      </div>
+                                      <div id="alertEditSuccess" class="alert alert-info fade in" hidden>
+                                          <button type="button" class="close" aria-hidden="true">&times;</button>
+                                          <strong>Confirmed!</strong> You successfully edited this Office Hour.
+                                          <p>
+                                              <a href="/officehours">Return To Index</a>
+                                          </p>
+                                      </div>
+                                      <div id="alertDeleteSuccess" class="alert alert-warning fade in" hidden>
+                                          <strong>Confirmed!</strong> You successfully deleted this Office Hour.
+                                          <p>
+                                              <a href="/officehours" class="btn btn-default">Return To Index</a>
+                                          </p>
+                                      </div>
+                                  </div>
+                              </div>
+                          </form>
+                      </div>
+                  </div>
+              </div>
+          </div>
+      </div>
+      
+      <div class="modal fade" id="modalDeleteConfirm" tabindex="-1" role="dialog" aria-labelledby="modalSmallLabel" aria-hidden="true">
+          <div class="modal-dialog modal-sm">
+              <div class="modal-content">
+                  <div class="modal-header">
+                      <button type="button" class="close" data-dismiss="modal" aria-hidden="true"><i class="icon_close fa-lg"></i></button>
+                      <h4 class="modal-title" id="modalLabel">Are your sure?</h4>
+                  </div>
+                  <div class="modal-body">
+                      <p>Deleting this Office Hour is permanent.</p>
+                  </div>
+                  <div class="modal-footer">
+                      <button type="button" class="btn btn-default" id="cmdDeleteCancel" data-dismiss="modal">Cancel</button>
+                      <button type="button" class="btn btn-primary" id="cmdDeleteConfirm" data-dismiss="modal">Delete</button>
+                  </div>
+              </div>
+          </div>
+      </div>
+
+
+    <script type="text/javascript src="/wrapkit/scripts/jquery.validate.js"></script>
+    <script type="text/javascript src="/Wrapkit/scripts/moment.js"></script>
+    <script type="text/javascript src="/wrapkit/scripts/toastr.js"></script>
+    <script type="text/javascript src="/scripts/datalus.services.officehours.js"></script>
+    
+    <script type="text/javascript">
+        datalus.page.startUp = function () {
+            datalus.page.$idField = $('#idField');
+            datalus.page.id = datalus.page.$idField.val();
+            datalus.page.$formOfficeHour = $('#formOfficeHour');
+
+            datalus.page.initializeValidation();
+
+            $("#cmdSubmit").on("click", datalus.page.handlers.onSubmitForm);
+
+            if (datalus.page.id != 0) {
+                datalus.page.adjustPageForEdit();
+                datalus.services.officeHours.getById(datalus.page.id, datalus.page.ajaxGetByIdSuccess, datalus.page.ajaxError);
+            }
+
+            $('#cmdDeleteConfirm').on('click', datalus.page.onDeleteConfirm);
+            $('#cmdDeleteCancel').on('click', datalus.page.onDeleteCancel);
+
+            $('.close').on('click', datalus.page.onDismissAlert);
+
+            $('body').on('click', 'a[disabled="disabled"]', function (event) {
+                event.preventDefault();
+            });
+        };
+
+        datalus.page.onDismissAlert = function () {
+            $(this).closest('.alert').fadeOut(400);
+        }
+
+        datalus.page.handlers.onSubmitForm = function () {
+            if (datalus.page.$formOfficeHour.valid()) {
+                var formData = datalus.page.$formOfficeHour.serialize();
+                if (datalus.page.id == 0) {
+                    datalus.services.officeHours.post(formData, datalus.page.ajaxPostSuccess, datalus.page.ajaxError);
+                }
+                else {
+                    datalus.services.officeHours.put(datalus.page.id, formData, datalus.page.ajaxPutSuccess, datalus.page.ajaxError);
+                }
+            }
+            else {
+                $('.form-control-feedback').addClass('icon-close');
+            }
+        };
+
+        datalus.page.onDelete = function () {
+            datalus.page.signalAlert('onDelete');
+        }
+
+        datalus.page.onDeleteConfirm = function () {
+            datalus.services.officeHours.delete(datalus.page.id, datalus.page.ajaxDeleteSuccess, datalus.page.ajaxError);
+        }
+
+        datalus.page.onDeleteCancel = function () {
+        }
+
+        datalus.page.ajaxPostSuccess = function (data, status, xhr) {
+            datalus.page.populateIdField(data.item);
+            datalus.page.adjustPageForEdit();
+            datalus.page.signalAlert('post');
+        }
+
+        datalus.page.ajaxPutSuccess = function (data, status, xhr) {
+            datalus.page.signalAlert('put');
+            datalus.page.populateFormFields(data.item);
+        }
+
+        datalus.page.ajaxGetByIdSuccess = function (data, status, xhr) {
+            datalus.page.populateFormFields(data.item);
+        }
+
+        datalus.page.ajaxDeleteSuccess = function () {
+            datalus.page.$formOfficeHour.find('input, select').val('');
+            datalus.page.$formOfficeHour.find('input, select').attr('disabled', 'disabled');
+            var $formButtons = $('#formButtons');
+            $formButtons.children(':not(#cmdIndex)').hide();
+            $formButtons.find('#cmdIndexReturn').removeClass('hidden');
+            datalus.page.signalAlert('deleteConfirm');
+        }
+
+        //  alert the user of the action taken recently
+        datalus.page.signalAlert = function (type) {
+            $('.alert').hide();
+            switch (type) {
+                case 'post':
+                    $('#alertCreateSuccess').fadeIn(400);
+                    break;
+                case 'put':
+                    $('#alertEditSuccess').fadeIn(400);
+                    break;
+                case 'deleteConfirm':
+                    $('#alertDeleteSuccess').fadeIn(400);
+                    break;
+            }
+        }
+
+        datalus.page.ajaxError = function (jqXHR, textStatus, errorThrown) {
+            datalus.page.signalAlert('error');
+        }
+
+        datalus.page.populateIdField = function (item) {
+            datalus.page.$idField.val(item);
+            datalus.page.id = datalus.page.$idField.val();
+        }
+
+        datalus.page.populateFormFields = function (item) {
+            $('#inputTopic').val(item.topic);
+            $('#inputInstructor').val(item.instructor.id);
+            $('#inputLocation').val(item.location);
+            $('#inputSessionDate').val(moment(item.sessionDate).format('YYYY-MM-DD'));
+            $('#inputStartTime').val(moment(item.startTime).format('HH:mm'));
+            $('#inputEndTime').val(moment(item.endTime).format('HH:mm'));
+        }
+
+        datalus.page.adjustPageForEdit = function () {
+            $('#pageTitle span, #breadcrumbCurrent').text('Edit');
+            $('#cmdDelete').removeClass('hidden');
+            $('#cmdReset').hide();
+            $('#cmdSubmit').append(' Edit');
+        }
+
+        datalus.page.initializeValidation = function () {
+            jQuery.validator.setDefaults({
+                debug: true
+            });
+
+            datalus.page.$formOfficeHour.validate({
+                rules: {
+                    "topic": {
+                        required: true,
+                    }
+                    , "instructorId": {
+                        required: true
+                    }
+                    , "location": {
+                        required: true
+                    }
+                    , "sessionDate": {
+                        required: true
+                    }
+                    , "startTime": {
+                        required: true,
+                    }
+                    , "endTime": {
+                        required: true,
+                    }
+                },
+
+                messages: {
+                    "topic": {
+                        required: "Name the overall subject matter of the session."
+                    }
+                    , "instructorId": {
+                        required: "Choose a datalus Instructor to lead the session."
+                    }
+                    , "location": {
+                        required: "Provide details of the session's meeting place."
+                    }
+                    , "sessionDate": {
+                        required: "Date is required."
+                    }
+                    , 'startTime': {
+                        required: "Start time is required."
+                    }
+                    , 'endTime': {
+                        required: "End time is required."
+                    }
+                }
+            });
+        };
+
+    </script>
+
+  
+  
+  </body>
+</html>

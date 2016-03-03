@@ -1,0 +1,414 @@
+< !DOCTYPE html >
+<html class="no-js" lang=“en">
+  <head>
+    @* REMOVED HEAD CONTENT FOR SNIPPET BREVITY *@
+  </head>
+  
+  
+  <body>
+  
+    <main data-ng-app=“datalusApp" class="wrapkit-wrapper" id="wrapper">
+    
+      <div data-ng-controller="officeHourdashboard as dashboard">
+        <h2 id="pageTitle"><span ng-bind="dashboard.pageTitle"></span> an Office Hour Session</h2>
+
+        <div class="content-body">
+          <div class="row">
+
+            <div class="col-md-8">
+                <div class="panel" data-fill-color="true">
+                    <div class="panel-body">
+
+                        <form id="formOfficeHour" name="dashboard.formOfficeHour" ng-submit="dashboard.submitOfficeHour()" novalidate>
+                            <fieldset ng-disabled="dashboard.disableForm">
+                            
+                                <div class="form-group hidden">
+                                    <label class="control-label" for="id">Id</label>
+                                    <input class="form-control"
+                                           name="id"
+                                           id="id"
+                                           data-ng-init="@Model.Id"
+                                           data-ng-model="dashboard.itemOfficeHour.id">
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label class="control-label" for="sectionId">Section</label>
+                                    <select class="form-control ng-class:{'error':dashboard.showFormErrors && !dashboard.formOfficeHour.sectionId.$valid}"
+                                            ng-disabled="dashboard.specificSection"
+                                            name="sectionId"
+                                            id="sectionId"
+                                            data-ng-model="dashboard.itemOfficeHour.sectionId"
+                                            data-ng-options="section.id as (section.sectionNumberId + ' - ' + section.title) for section in dashboard.sections"
+                                            required>
+                                        <option value="">Select a Section</option>
+                                    </select>
+                                    <div role="alert" class="help-inline error">
+                                        <span class="error" data-ng-show="dashboard.showFormErrors && dashboard.formOfficeHour.sectionId.$error.required">Choose the associated datalus Section.</span>
+                                    </div>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label class="control-label" for="topic">Topic</label>
+                                    <input class="form-control ng-class:{'error':dashboard.showFormErrors && !dashboard.formOfficeHour.topic.$valid}"
+                                           placeholder="Topic"
+                                           name="topic"
+                                           id="topic"
+                                           data-ng-model="dashboard.itemOfficeHour.topic"
+                                           ng-maxlength="50"
+                                           required>
+                                    <div role="alert" class="help-inline error">
+                                        <span class="error" data-ng-show="dashboard.showFormErrors && dashboard.formOfficeHour.topic.$error.maxlength">Topic must be 50 characters or less.</span>
+                                        <span class="error" data-ng-show="dashboard.showFormErrors && dashboard.formOfficeHour.topic.$error.required">Name the subject matter of the session.</span>
+                                    </div>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label class="control-label" for="instructorId">Instructor</label>
+                                    <select class="form-control ng-class:{'error':dashboard.showFormErrors && !dashboard.formOfficeHour.instructorId.$valid}"
+                                            ng-disabled="dashboard.specificInstructor"
+                                            name="instructorId"
+                                            id="instructorId"
+                                            data-ng-model="dashboard.itemOfficeHour.instructorId"
+                                            data-ng-options="instructor.id as (instructor.firstName + ' ' + instructor.lastName) for instructor in dashboard.instructors"
+                                            required>
+                                        <option value="">Select an Instructor</option>
+                                    </select>
+                                    <div role="alert" class="help-inline error">
+                                        <span class="error" data-ng-show="dashboard.showFormErrors && dashboard.formOfficeHour.instructorId.$error.required">Choose a datalus Instructor to lead the session.</span>
+                                    </div>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label class="control-label" for="location">Location</label>
+                                    <input class="form-control ng-class:{'error':dashboard.showFormErrors && !dashboard.formOfficeHour.location.$valid}"
+                                           placeholder="Location"
+                                           name="location"
+                                           id="location"
+                                           data-ng-model="dashboard.itemOfficeHour.location"
+                                           ng-maxlength="50"
+                                           required>
+                                    <div role="alert" class="help-inline error">
+                                        <span class="error" ng-show="dashboard.showFormErrors && dashboard.formOfficeHour.location.$error.maxlength">Location must be 50 characters or less.</span>
+                                        <span class="error" ng-show="dashboard.showFormErrors && dashboard.formOfficeHour.location.$error.required">Provide details of the session's meeting place.</span>
+                                    </div>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label class="control-label" for="sessionDate">Session Date</label>
+                                    <input type="date" class="form-control ng-class:{'error':dashboard.showFormErrors && !dashboard.formOfficeHour.sessionDate.$valid}"
+                                           placeholder="YYYY-MM-DD"
+                                           name="sessionDate"
+                                           id="sessionDate"
+                                           data-ng-model="dashboard.itemOfficeHour.sessionDate"
+                                           required>
+                                    <div role="alert" class="help-inline error">
+                                        <span class="error" ng-show="dashboard.showFormErrors && dashboard.formOfficeHour.sessionDate.$error.required">Date is required.</span>
+                                    </div>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label class="control-label" for="startTime">Start Time</label>
+                                    <input type="time" class="form-control ng-class:{'error':dashboard.showFormErrors && !dashboard.formOfficeHour.startTime.$valid}"
+                                           placeholder="HH:MM (24-Hour Time)"
+                                           name="startTime"
+                                           id="startTime"
+                                           data-ng-model="dashboard.itemOfficeHour.startTime"
+                                           required>
+                                    <div role="alert" class="help-inline error">
+                                        <span class="error" ng-show="dashboard.showFormErrors && dashboard.formOfficeHour.startTime.$error.required">Start Time is required.</span>
+                                    </div>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label class="control-label" for="endTime">End Time</label>
+                                    <input type="time" class="form-control ng-class:{'error':dashboard.showFormErrors && !dashboard.formOfficeHour.endTime.$valid}"
+                                           placeholder="HH:MM (24-Hour Time)"
+                                           name="endTime"
+                                           id="endTime"
+                                           data-ng-model="dashboard.itemOfficeHour.endTime"
+                                           required>
+                                    <div role="alert" class="help-inline error">
+                                        <span class="error" ng-show="dashboard.showFormErrors && dashboard.formOfficeHour.endTime.$error.required">End Time is required.</span>
+                                    </div>
+                                </div>
+                                
+                                <div class="form-group clearfix">
+                                    <div class="pull-right mb-1x" id="formButtons">
+                                        <a id="cmdIndexReturn" class="btn btn-primary hidden" href="/OfficeHours">Return To Index</a>
+                                        <button type="button" id="cmdDelete" class="btn btn-danger" ng-class="dashboard.deleteButtonClass" ng-click="dashboard.openModal()">Delete Office Hour</button>
+                                        <a href="/OfficeHours" id="cmdCancel" class="btn btn-default"><span ng-bind="dashboard.cancelButtonText"></span></a>
+                                        <button type="reset" id="cmdReset" class="btn btn-info" ng-click="dashboard.resetForm()" ng-class="dashboard.resetButtonClass">Reset</button>
+                                        <button type="submit" id="cmdSubmit" class="btn btn-primary"><span ng-bind="dashboard.submitButtonText"></span></button>
+                                    </div>
+                                </div>
+                                
+                            </fieldset>
+                        </form>
+
+                    </div>
+                </div>
+            </div>
+          </div>
+        </div>
+      
+      </div>
+
+    </main>
+    
+    
+    <script type="text/ng-template" id="deleteOfficeHourModal.html">
+        <div class="modal-header">
+            <h3 class="modal-title">Are you sure?</h3>
+        </div>
+        <div class="modal-body">
+            <p>Deleting this Office Hour is permanent.</p>
+        </div>
+        <div class="modal-footer">
+            <button type="button" ng-click="modalCon.cancelDelete()" class="btn btn-default" id="cmdDeleteCancel">Cancel</button>
+            <button type="button" ng-click="modalCon.confirmDelete()" class="btn btn-primary" id="cmdDeleteConfirm">Delete</button>
+        </div>
+    </script>
+    
+    <script type="text/javascript" src="/Scripts/datalus.services.officehours.js"></script>
+    <script type="text/javascript" src="/Scripts/datalus.services.instructors.js"></script>
+    <script type="text/javascript" src="/Scripts/datalus.services.sections.js"></script>
+    
+    <script type="text/javascript" src="/Wrapkit/scripts/moment.js"></script>
+    <script type="text/javascript" src="/Scripts/datalus/core/services/alert.service.js"></script>
+    <script type="text/javascript" src="/Scripts/app/services/officeHourService.js"></script>
+    <script type="text/javascript" src="/Scripts/app/services/instructorService.js"></script>
+    <script type="text/javascript" src="/Scripts/app/services/sectionsService.js"></script>
+    
+    <script type="text/javascript">
+        datalus.page.officeHourId = @Model.Id;
+        datalus.page.instructorId = @Model.InstructorId;
+        datalus.page.sectionId = @Model.SectionId;
+    </script>
+    
+    <script type="text/javascript>
+        (function () {
+            "use strict";
+
+            angular.module("datalusApp", [])
+                .controller('officeHourCreateController', OfficeHourCreateController);
+
+            OfficeHourCreateController.$inject = ['$scope', '$baseController', '$officeHourService', '$instructorService', '$sectionsService', '$uibModal'];
+
+            function OfficeHourCreateController($scope, $baseController, $officeHourService, $instructorService, $sectionsService, $uibModal) {
+                var vm = this;
+                vm.formOfficeHour = null;
+                vm.itemOfficeHour = {};
+                vm.instructors = null;
+                vm.sections = null;
+                vm.submitButtonText = "Submit";
+                vm.cancelButtonText = "Cancel";
+                vm.deleteButtonClass = "hidden";
+                vm.resetButtonClass = "";
+                vm.showFormErrors = false;
+                vm.disableForm = false;
+                vm.pageTitle = "Create";
+
+                vm.$officeHourService = $officeHourService;
+                vm.$instructorService = $instructorService;
+                vm.$sectionsService = $sectionsService;
+                vm.$scope = $scope;
+                vm.$uibModal = $uibModal;
+
+                vm.receiveInstructors = _receiveInstructors;
+                vm.receiveSections = _receiveSections;
+                vm.receiveOfficeHour = _receiveOfficeHour;
+                vm.onGetError = _onGetError;
+                vm.ajaxPostSuccess = _ajaxPostSuccess;
+                vm.ajaxPutSuccess = _ajaxPutSuccess;
+                vm.ajaxDeleteSuccess = _ajaxDeleteSuccess;
+                vm.ajaxError = _ajaxError;
+                vm.submitOfficeHour = _submitOfficeHour;
+                vm.deleteOfficeHour = _deleteOfficeHour;
+                vm.resetForm = _resetForm;
+                vm.ifEdit = _ifEdit;
+                vm.adjustPageForEdit = _adjustPageForEdit;
+                vm.openModal = _openModal;
+
+                $baseController.merge(vm, $baseController);
+
+                vm.notify = vm.$officeHourService.getNotifier($scope);
+
+                render();
+
+                function render() {
+                    vm.$instructorService.getAll(vm.receiveInstructors, vm.onGetError);
+                }
+
+                function _receiveInstructors(data) {
+                    if (vm.$datalus.instructorId != 0) {
+                        vm.notify(function () {
+                            vm.itemOfficeHour.instructorId = vm.$datalus.instructorId;
+                        })
+                        vm.specificInstructor = true;
+                    }
+
+                    vm.$sectionsService.getAll(vm.receiveSections, vm.onGetError);
+
+                    vm.notify(function () {
+                        vm.instructors = data.items;
+                        if (data.items == null) {
+                            vm.$alertService.warning("Instructors not found.", "Warning!");
+                        }
+                    })
+                }
+
+                function _receiveSections(data) {
+                    if (vm.$datalus.sectionId != 0) {
+                        vm.notify(function () {
+                            vm.itemOfficeHour.sectionId = vm.$datalus.sectionId;
+                        })
+                        vm.specificSection = true;
+                    }
+
+                    vm.ifEdit();
+
+                    vm.notify(function () {
+                        vm.sections = data.items;
+                        if (data.items == null) {
+                            vm.$alertService.warning("Sections not found.", "Warning!");
+                        }
+                    })
+                }
+
+                function _ifEdit() {
+                    if (vm.$datalus.officeHourId != 0) {
+                        vm.adjustPageForEdit();
+                        vm.$officeHourService.getById(vm.$datalus.officeHourId, vm.receiveOfficeHour, vm.onGetError);
+                    }
+                }
+
+                function _adjustPageForEdit() {
+                    vm.$log.log("adjust page for edit...");
+                    vm.pageTitle = "Edit";
+                    vm.submitButtonText = "Submit Edit";
+                    vm.cancelButtonText = "Cancel Edit";
+                    vm.deleteButtonClass = "";
+                    vm.resetButtonClass = "hidden";
+                }
+
+                function _receiveOfficeHour(data) {
+                    vm.notify(function () {
+                        vm.itemOfficeHour = data.item;
+                        if (data.item == null) {
+                            vm.$alertService.error("Office Hour not found. You will be redirected in 5 seconds...", "Error!");
+                            setTimeout(function () {
+                                window.location.replace("/OfficeHours");
+                            }, 5000);
+                        }
+                        else {
+                            vm.itemOfficeHour.instructorId = vm.itemOfficeHour.instructor.id;
+                            vm.itemOfficeHour.sessionDate = moment(vm.itemOfficeHour.sessionDate).toDate();
+                            vm.itemOfficeHour.startTime = moment(vm.itemOfficeHour.startTime).toDate();
+                            vm.itemOfficeHour.endTime = moment(vm.itemOfficeHour.endTime).toDate();
+                            vm.itemOfficeHour.sectionId = vm.itemOfficeHour.section.id;
+                        }
+                    })
+                }
+
+                function _submitOfficeHour() {
+                    vm.showFormErrors = true;
+
+                    if (vm.formOfficeHour.$valid) {
+                        if (vm.$datalus.officeHourId == 0) {
+                            vm.$officeHourService.post(vm.itemOfficeHour, vm.ajaxPostSuccess, vm.ajaxError);
+                        }
+                        else {
+                            vm.$officeHourService.put(vm.$datalus.officeHourId, vm.itemOfficeHour, vm.ajaxPutSuccess, vm.ajaxError);
+                        }
+                    }
+                    else {
+                        vm.$alertService.error('Invalid form...');
+                    }
+                }
+
+                function _deleteOfficeHour() {
+                    vm.$officeHourService.delete(vm.$datalus.officeHourId, vm.ajaxDeleteSuccess, vm.ajaxError);
+                }
+
+                function _resetForm() {
+                    vm.showFormErrors = false;
+                    vm.itemOfficeHour = null;
+                    vm.formOfficeHour.$setPristine();
+                    vm.formOfficeHour.$setUntouched();
+                    vm.$alertService.info("You've reset the form.", "Reset Success!");
+                }
+
+                function _ajaxPostSuccess(data, status, xhr) {
+                    vm.$datalus.officeHourId = data.item;
+                    vm.itemOfficeHour.id = data.item;
+                    vm.adjustPageForEdit();
+                    vm.$alertService.success("Create Successful");
+                }
+
+                function _ajaxPutSuccess(data, status, xhr) {
+                    vm.$alertService.success("Change Saved");
+                }
+
+                function _ajaxDeleteSuccess(data, status, xhr) {
+                    vm.disableForm = true;
+                    vm.$alertService.success("Record Deleted");
+                    setTimeout(function () {
+                        window.location.replace("/OfficeHours");
+                    }, 3000);
+                }
+
+                function _ajaxError(jqXHR, textStatus, errorThrown) {
+                    vm.$alertService.error("An Error Occurred");
+                }
+
+                function _onGetError(jqXhr, error) {
+                    vm.$alertService.error("An Error Occurred");
+                }
+
+                function _openModal() {
+                    var modalInstance = vm.$uibModal.open({
+                        animation: true,
+                        templateUrl: 'deleteOfficeHourModal.html',
+                        controller: 'deleteModalController as modalCon',
+                        size: 'sm',
+                    });
+
+                    modalInstance.result.then(function () {
+                        vm.deleteOfficeHour();
+                    });
+                }
+            }
+        })();
+        
+
+        (function () {
+            "use strict";
+
+            angular.module("datalusApp")
+                .controller('deleteModalController', DeleteModalController);
+
+            DeleteModalController.$inject = ['$scope', '$baseController', '$uibModalInstance']
+
+            function DeleteModalController($scope, $baseController, $uibModalInstance) {
+                var vm = this;
+
+                $baseController.merge(vm, $baseController);
+
+                vm.$scope = $scope;
+                vm.$uibModalInstance = $uibModalInstance;
+
+                vm.confirmDelete = function () {
+                    vm.$uibModalInstance.close();
+                };
+
+                vm.cancelDelete = function () {
+                    vm.$uibModalInstance.dismiss();
+                };
+            }
+        })();
+        
+    </script>
+    
+    
+  </body>
+</html>

@@ -57,8 +57,6 @@ datalus.services.officeHours.delete = function (id, onSuccess, onError) {
     var url = "/api/officehours/" + id;
     var settings = {
         cache: false
-        , contentType: "application/x-www-form-urlencoded; charset=UTF-8"
-        , dataType: "json"
         , success: onSuccess
         , error: onError
         , type: "DELETE"
